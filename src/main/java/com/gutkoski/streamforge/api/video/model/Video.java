@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import java.util.UUID;
 
 @Entity
-@Table(name = "videos")
+@Table(schema = "media", name = "videos")
 public class Video {
 
     @Id
