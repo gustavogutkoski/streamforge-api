@@ -9,6 +9,7 @@ import com.gutkoski.streamforge.api.video.repository.VideoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class VideoChunkServiceImpl implements VideoChunkService {
@@ -40,7 +41,7 @@ public class VideoChunkServiceImpl implements VideoChunkService {
         );
     }
 
-    public List<VideoChunkResponseDTO> findByVideo(Long videoId) {
+    public List<VideoChunkResponseDTO> findByVideo(UUID videoId) {
         return videoChunkRepository.findByVideoIdOrderByChunkIndex(videoId).stream()
                 .map(c -> new VideoChunkResponseDTO(
                         c.getId(),

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/video-chunks")
@@ -28,7 +29,7 @@ public class VideoChunkController {
     }
 
     @GetMapping("/video/{videoId}")
-    public List<VideoChunkResponseDTO> getChunksByVideo(@PathVariable Long videoId) {
+    public List<VideoChunkResponseDTO> getChunksByVideo(@PathVariable UUID videoId) {
         return videoChunkService.findByVideo(videoId);
     }
 }
