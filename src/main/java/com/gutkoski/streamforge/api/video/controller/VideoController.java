@@ -1,7 +1,7 @@
 package com.gutkoski.streamforge.api.video.controller;
 
+import com.gutkoski.streamforge.api.video.dto.VideoResponseDTO;
 import com.gutkoski.streamforge.api.video.service.VideoService;
-import com.gutkoski.streamforge.api.video.model.Video;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,18 +24,18 @@ public class VideoController {
     }
 
     @PostMapping("/upload")
-    public Video uploadVideo(@RequestParam("file") MultipartFile file,
-                             @RequestParam("title") String title) {
+    public VideoResponseDTO uploadVideo(@RequestParam("file") MultipartFile file,
+                                        @RequestParam("title") String title) {
         return videoService.uploadVideo(file, title);
     }
 
     @GetMapping("/{id}")
-    public Video getVideo(@PathVariable UUID id) {
+    public VideoResponseDTO getVideo(@PathVariable UUID id) {
         return videoService.getVideoById(id);
     }
 
     @GetMapping
-    public List<Video> getAllVideos() {
+    public List<VideoResponseDTO> getAllVideos() {
         return videoService.getAllVideos();
     }
 }

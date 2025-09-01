@@ -1,5 +1,6 @@
 package com.gutkoski.streamforge.api.user.service;
 
+import com.gutkoski.streamforge.api.user.dto.UserRequestDTO;
 import com.gutkoski.streamforge.api.user.dto.UserResponseDTO;
 import com.gutkoski.streamforge.api.user.model.User;
 import com.gutkoski.streamforge.api.user.repository.UserRepository;
@@ -20,9 +21,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO createUser(User user) {
-        User savedUser = userRepository.save(user);
+    public UserResponseDTO createUser(UserRequestDTO request) {
+        User savedUser = userRepository.save(
+                toEntity(request)
+        );
         return toDTO(savedUser);
+    }
+
+    private String hashPassword(String password) {
+        // TODO: use BCryptPasswordEncoder?
+        return password;
     }
 
     @Override
@@ -55,5 +63,13 @@ public class UserServiceImpl implements UserService {
                 user.getEmail(),
                 videos
         );
+    }
+
+    private User toEntity(UserRequestDTO dto) {
+        User user = new User();
+        user.setUsername(dto.username());
+        user.setEmail(dto.email());
+        user.setPasswordHash(hashPassword(dto.password()));
+        return user;
     }
 }

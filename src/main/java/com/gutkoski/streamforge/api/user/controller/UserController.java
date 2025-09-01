@@ -1,7 +1,8 @@
 package com.gutkoski.streamforge.api.user.controller;
 
+import com.gutkoski.streamforge.api.user.dto.UserRequestDTO;
+import com.gutkoski.streamforge.api.user.dto.UserResponseDTO;
 import com.gutkoski.streamforge.api.user.service.UserService;
-import com.gutkoski.streamforge.api.user.model.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,17 +24,17 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public UserResponseDTO createUser(@RequestBody UserRequestDTO user) {
         return userService.createUser(user);
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable UUID id) {
+    public UserResponseDTO getUser(@PathVariable UUID id) {
         return userService.getUserById(id);
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserResponseDTO> getAllUsers() {
         return userService.getAllUsers();
     }
 }
