@@ -3,6 +3,7 @@ package com.gutkoski.streamforge.api.videochunk.service;
 import com.gutkoski.streamforge.api.videochunk.dto.VideoChunkRequestDTO;
 import com.gutkoski.streamforge.api.videochunk.dto.VideoChunkResponseDTO;
 import com.gutkoski.streamforge.api.video.model.Video;
+import com.gutkoski.streamforge.api.videochunk.mapper.VideoChunkMapper;
 import com.gutkoski.streamforge.api.videochunk.model.VideoChunk;
 import com.gutkoski.streamforge.api.videochunk.repository.VideoChunkRepository;
 import com.gutkoski.streamforge.api.video.repository.VideoRepository;
@@ -22,33 +23,25 @@ public class VideoChunkServiceImpl implements VideoChunkService {
         this.videoRepository = videoRepository;
     }
 
+    @Override
     public VideoChunkResponseDTO save(VideoChunkRequestDTO dto) {
         Video video = videoRepository.findById(dto.videoId())
                 .orElseThrow(() -> new RuntimeException("Video not found"));
 
-        VideoChunk chunk = new VideoChunk();
-        chunk.setChunkIndex(dto.chunkIndex());
-        chunk.setStoragePath(dto.storagePath());
+        VideoChunk chunk = VideoChunkMapper.INSTANCE.toEntity(dto);
         chunk.setVideo(video);
 
         VideoChunk saved = videoChunkRepository.save(chunk);
 
-        return new VideoChunkResponseDTO(
-                saved.getId(),
-                saved.getChunkIndex(),
-                saved.getStoragePath(),
-                saved.getVideo().getId()
-        );
+        return VideoChunkMapper.INSTANCE.toDTO(saved);
     }
 
+    @Override
     public List<VideoChunkResponseDTO> findByVideo(UUID videoId) {
-        return videoChunkRepository.findByVideoIdOrderByChunkIndex(videoId).stream()
-                .map(c -> new VideoChunkResponseDTO(
-                        c.getId(),
-                        c.getChunkIndex(),
-                        c.getStoragePath(),
-                        c.getVideo().getId()
-                ))
+        return videoChunkRepository.findByVideoIdOrderByChunkIndex(videoId)
+                .stream()
+                .map(VideoChunkMapper.INSTANCE::toDTO)
                 .toList();
     }
 }
+
