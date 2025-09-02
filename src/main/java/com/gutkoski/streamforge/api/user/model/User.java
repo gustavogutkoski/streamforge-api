@@ -4,6 +4,7 @@ import com.gutkoski.streamforge.api.video.model.Video;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,8 +32,16 @@ public class User {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "owner",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
     private List<Video> videos;
+
+    public User() {
+    }
 
     public UUID getId() {
         return id;
