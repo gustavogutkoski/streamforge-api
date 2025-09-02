@@ -1,31 +1,38 @@
 package com.gutkoski.streamforge.api.video.service;
 
+import com.gutkoski.streamforge.api.user.repository.UserRepository;
+import com.gutkoski.streamforge.api.video.dto.VideoRequestDTO;
 import com.gutkoski.streamforge.api.video.dto.VideoResponseDTO;
 import com.gutkoski.streamforge.api.video.mapper.VideoMapper;
 import com.gutkoski.streamforge.api.video.model.Video;
 import com.gutkoski.streamforge.api.video.repository.VideoRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class VideoServiceImpl implements VideoService {
 
     private final VideoRepository videoRepository;
+    private final UserRepository userRepository;
 
-    public VideoServiceImpl(VideoRepository videoRepository) {
+    public VideoServiceImpl(VideoRepository videoRepository,
+                            UserRepository userRepository) {
         this.videoRepository = videoRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public VideoResponseDTO uploadVideo(MultipartFile file, String title) {
-        // TODO:  use MinIO as video storage
-        Video video = new Video();
-        video.setTitle(title);
+    public VideoResponseDTO createVideo(VideoRequestDTO dto) {
+        var owner = userRepository.findById(dto.ownerId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Video video = VideoMapper.INSTANCE.toEntity(dto);
+        video.setOwner(owner);
+
         Video saved = videoRepository.save(video);
+
         return VideoMapper.INSTANCE.toDTO(saved);
     }
 
@@ -38,8 +45,28 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public List<VideoResponseDTO> getAllVideos() {
-        return videoRepository.findAll().stream()
+        return videoRepository.findAll()
+                .stream()
                 .map(VideoMapper.INSTANCE::toDTO)
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    @Override
+    public void deleteVideo(UUID id) {
+        Video video = videoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Video not found"));
+        videoRepository.delete(video);
+    }
+
+    @Override
+    public VideoResponseDTO updateVideo(UUID id, VideoRequestDTO dto) {
+        Video video = videoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Video not found"));
+
+        video.setTitle(dto.title());
+        video.setDescription(dto.description());
+
+        Video updated = videoRepository.save(video);
+        return VideoMapper.INSTANCE.toDTO(updated);
     }
 }

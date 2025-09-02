@@ -1,14 +1,18 @@
 package com.gutkoski.streamforge.api.video.controller;
 
+import com.gutkoski.streamforge.api.video.dto.VideoRequestDTO;
 import com.gutkoski.streamforge.api.video.dto.VideoResponseDTO;
 import com.gutkoski.streamforge.api.video.service.VideoService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,19 +27,34 @@ public class VideoController {
         this.videoService = videoService;
     }
 
-    @PostMapping("/upload")
-    public VideoResponseDTO uploadVideo(@RequestParam("file") MultipartFile file,
-                                        @RequestParam("title") String title) {
-        return videoService.uploadVideo(file, title);
+    @PostMapping
+    public ResponseEntity<VideoResponseDTO> createVideo(@RequestBody VideoRequestDTO requestDTO) {
+        VideoResponseDTO response = videoService.createVideo(requestDTO);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public VideoResponseDTO getVideo(@PathVariable UUID id) {
-        return videoService.getVideoById(id);
+    public ResponseEntity<VideoResponseDTO> getVideo(@PathVariable UUID id) {
+        VideoResponseDTO response = videoService.getVideoById(id);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public List<VideoResponseDTO> getAllVideos() {
-        return videoService.getAllVideos();
+    public ResponseEntity<List<VideoResponseDTO>> getAllVideos() {
+        List<VideoResponseDTO> videos = videoService.getAllVideos();
+        return ResponseEntity.ok(videos);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<VideoResponseDTO> updateVideo(@PathVariable UUID id,
+                                                        @RequestBody VideoRequestDTO requestDTO) {
+        VideoResponseDTO updated = videoService.updateVideo(id, requestDTO);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteVideo(@PathVariable UUID id) {
+        videoService.deleteVideo(id);
+        return ResponseEntity.noContent().build();
     }
 }
