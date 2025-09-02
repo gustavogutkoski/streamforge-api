@@ -12,9 +12,12 @@ public interface VideoMapper {
 
     VideoMapper INSTANCE = Mappers.getMapper(VideoMapper.class);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "chunks", ignore = true)
     @Mapping(target = "owner.id", source = "ownerId")
     Video toEntity(VideoRequestDTO dto);
 
     @Mapping(target = "ownerId", source = "owner.id")
     VideoResponseDTO toDTO(Video video);
 }
+

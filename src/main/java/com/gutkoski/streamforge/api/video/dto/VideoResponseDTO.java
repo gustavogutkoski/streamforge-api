@@ -6,5 +6,9 @@ public record VideoResponseDTO(
         UUID id,
         String title,
         String description,
-        UUID ownerId
+        UUID ownerId,
+        long fileSize,
+        String contentType,
+        String bucketName,
+        String objectName
 ) {}

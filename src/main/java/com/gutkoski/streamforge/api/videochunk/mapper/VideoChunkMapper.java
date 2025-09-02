@@ -12,6 +12,7 @@ public interface VideoChunkMapper {
 
     VideoChunkMapper INSTANCE = Mappers.getMapper(VideoChunkMapper.class);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "video.id", source = "videoId")
     VideoChunk toEntity(VideoChunkRequestDTO dto);
 

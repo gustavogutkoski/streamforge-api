@@ -5,6 +5,9 @@ import java.util.UUID;
 public record VideoRequestDTO(
         String title,
         String description,
-        UUID ownerId
+        UUID ownerId,
+        long fileSize,
+        String contentType,
+        String bucketName,
+        String objectName
 ) {}
-

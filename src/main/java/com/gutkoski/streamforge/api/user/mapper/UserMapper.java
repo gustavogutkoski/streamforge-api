@@ -13,6 +13,8 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "videos", ignore = true)
     User toEntity(UserRequestDTO dto);
 
     @Mapping(target = "videos", source = "videos")
