@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +33,15 @@ public class VideoChunkController {
     @GetMapping("/video/{videoId}")
     public List<VideoChunkResponseDTO> getChunksByVideo(@PathVariable UUID videoId) {
         return videoChunkService.findByVideo(videoId);
+    }
+
+    @PostMapping("/upload")
+    public VideoChunkResponseDTO uploadChunk(
+            @RequestParam("videoId") UUID videoId,
+            @RequestParam("chunkIndex") Integer chunkIndex,
+            @RequestParam("file") MultipartFile file
+    ) {
+        return videoChunkService.saveChunk(videoId, chunkIndex, file);
     }
 }
 

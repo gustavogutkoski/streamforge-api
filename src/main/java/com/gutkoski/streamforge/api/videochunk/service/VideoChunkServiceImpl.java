@@ -1,13 +1,13 @@
 package com.gutkoski.streamforge.api.videochunk.service;
 
 import com.gutkoski.streamforge.api.storage.StorageService;
+import com.gutkoski.streamforge.api.video.model.Video;
+import com.gutkoski.streamforge.api.video.repository.VideoRepository;
 import com.gutkoski.streamforge.api.videochunk.dto.VideoChunkRequestDTO;
 import com.gutkoski.streamforge.api.videochunk.dto.VideoChunkResponseDTO;
-import com.gutkoski.streamforge.api.video.model.Video;
 import com.gutkoski.streamforge.api.videochunk.mapper.VideoChunkMapper;
 import com.gutkoski.streamforge.api.videochunk.model.VideoChunk;
 import com.gutkoski.streamforge.api.videochunk.repository.VideoChunkRepository;
-import com.gutkoski.streamforge.api.video.repository.VideoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,5 +54,25 @@ public class VideoChunkServiceImpl implements VideoChunkService {
     public void uploadChunkToStorage(MultipartFile file, String objectName) {
         storageService.uploadFile(file, objectName);
     }
+
+    @Override
+    public VideoChunkResponseDTO saveChunk(UUID videoId, Integer chunkIndex, MultipartFile file) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new RuntimeException("Video not found"));
+
+        String objectName = String.format("%s/chunk-%d", videoId, chunkIndex);
+
+        storageService.uploadFile(file, objectName);
+
+        VideoChunk chunk = new VideoChunk();
+        chunk.setVideo(video);
+        chunk.setChunkIndex(chunkIndex);
+        chunk.setObjectName(objectName);
+
+        VideoChunk saved = videoChunkRepository.save(chunk);
+
+        return VideoChunkMapper.INSTANCE.toDTO(saved);
+    }
+
 }
 

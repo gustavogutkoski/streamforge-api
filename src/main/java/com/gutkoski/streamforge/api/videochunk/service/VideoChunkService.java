@@ -12,4 +12,6 @@ public interface VideoChunkService {
     VideoChunkResponseDTO save(VideoChunkRequestDTO dto);
     List<VideoChunkResponseDTO> findByVideo(UUID videoId);
     void uploadChunkToStorage(MultipartFile file, String objectName);
+
+    VideoChunkResponseDTO saveChunk(UUID videoId, Integer chunkIndex, MultipartFile file);
 }
