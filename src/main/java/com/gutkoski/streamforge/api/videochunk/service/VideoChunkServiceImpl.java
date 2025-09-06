@@ -51,11 +51,6 @@ public class VideoChunkServiceImpl implements VideoChunkService {
     }
 
     @Override
-    public void uploadChunkToStorage(MultipartFile file, String objectName) {
-        storageService.uploadFile(file, objectName);
-    }
-
-    @Override
     public VideoChunkResponseDTO saveChunk(UUID videoId, Integer chunkIndex, MultipartFile file) {
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new RuntimeException("Video not found"));
